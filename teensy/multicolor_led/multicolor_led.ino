@@ -26,6 +26,11 @@ const int LED_PIN = 13;
 const int LED_ON = HIGH;
 const int LED_OFF = LOW;
 
+const byte PACKET_START_BYTE = 0xAA;
+const unsigned int PACKET_OVERHEAD_BYTES = 3;
+const unsigned int PACKET_MIN_BYTES = PACKET_OVERHEAD_BYTES + 1;
+const unsigned int PACKET_MAX_BYTES = 255;
+
 // define RGB LED pins
 const int RED_PIN = 21;
 const int GREEN_PIN = 22;
@@ -70,6 +75,85 @@ void setup()
 * @BRIEF main program loop
 * @AUTHOR Christoper D. McMurrough
 **********************************************************************************************************************/
+boolean sendPacket(unsigned int payloadSize, byte *payload)
+{
+    // check for max payload size
+    unsigned int packetSize = payloadSize + PACKET_OVERHEAD_BYTES;
+    if(packetSize > PACKET_MAX_BYTES)
+    {
+        return false;
+    }
+
+    // create the serial packet transmit buffer
+    static byte packet[PACKET_MAX_BYTES];
+
+    // populate the overhead fields
+    packet[0] = PACKET_START_BYTE;
+    packet[1] = packetSize;
+    byte checkSum = packet[0] ^ packet[1];
+
+    // populate the packet payload while computing the checksum
+    for(int i = 0; i < payloadSize; i++)
+    {
+        packet[i + 2] = payload[i];
+        checkSum = checkSum ^ packet[i + 2];
+    }
+
+    // store the checksum
+    packet[packetSize - 1] = checkSum;
+
+    // send the packet
+    Serial.write(packet, packetSize);
+    Serial.flush();
+    return true;
+}
+
+
+
+
+boolean validatePacket(unsigned int packetSize, byte *packet)
+{
+    // check the packet size
+    if(packetSize < PACKET_MIN_BYTES || packetSize > PACKET_MAX_BYTES)
+    {
+        return false;
+    }
+
+    // check the start byte
+    if(packet[0] != PACKET_START_BYTE)
+    {
+        return false;
+    }
+
+    // check the length byte
+    if(packet[1] != packetSize)
+    {
+        return false;
+    }
+
+    // compute the checksum
+    byte checksum = 0x00;
+    for(int i = 0; i < packetSize - 1; i++)
+    {
+        checksum = checksum ^ packet[i];
+    }
+
+    // check to see if the computed checksum and packet checksum are equal
+    if(packet[packetSize - 1] != checksum)
+    {
+        return false;
+    }
+
+    // all validation checks passed, the packet is valid
+    return true;
+}
+
+
+
+
+
+
+
 void loop()
 {
     int potValue = analogRead(POT_PIN);

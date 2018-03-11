@@ -44,8 +44,40 @@ void setup()
 void loop()
 {
     // turn the LED on and off
-    digitalWrite(LED_PIN, LED_ON);
-    delay(50);
-    digitalWrite(LED_PIN, LED_OFF);
-    delay(50);
+    digitalWrite(LED_PIN, LED_ON); // dot
+    delay(250);
+    digitalWrite(LED_PIN, LED_OFF); // blank
+    delay(250);
+    digitalWrite(LED_PIN, LED_ON); // dot
+    delay(250);
+    digitalWrite(LED_PIN, LED_OFF); // blank
+    delay(250);
+    digitalWrite(LED_PIN, LED_ON); // dot
+    delay(250);
+    digitalWrite(LED_PIN, LED_OFF); // blank
+    delay(250);
+    digitalWrite(LED_PIN, LED_ON); // dash
+    delay(500);
+    digitalWrite(LED_PIN, LED_OFF); // blank
+    delay(250);
+    digitalWrite(LED_PIN, LED_ON); // dash
+    delay(500);
+    digitalWrite(LED_PIN, LED_OFF); // blank
+    delay(250);
+    digitalWrite(LED_PIN, LED_ON); // dash
+    delay(500);
+    digitalWrite(LED_PIN, LED_OFF); // blank
+    delay(250);
+    digitalWrite(LED_PIN, LED_ON); // dot
+    delay(250);
+    digitalWrite(LED_PIN, LED_OFF); // blank
+    delay(250);
+    digitalWrite(LED_PIN, LED_ON); // dot
+    delay(250);
+    digitalWrite(LED_PIN, LED_OFF); // blank
+    delay(250);
+    digitalWrite(LED_PIN, LED_ON); // dot
+    delay(250);
+    digitalWrite(LED_PIN, LED_OFF); // blank
+    delay(2000);
 }

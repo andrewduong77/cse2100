@@ -38,13 +38,22 @@ const int LED_PIN = 13;
 const int LED_ON = HIGH;
 const int LED_OFF = LOW;
 
+// define RGB LED pins
+const int RED_PIN = 21;
+const int GREEN_PIN = 22;
+const int BLUE_PIN = 23;
+const int RGB_ON = LOW;
+const int RGB_OFF = HIGH;
+
+// define potentiometer pins
+const int POT_PIN = 14;
+
 // define serial communication parameters
 const unsigned long BAUD_RATE = 9600;
 
 // define packet parameters
 const byte PACKET_START_BYTE = 0xAA;
-//const unsigned int PACKET_OVERHEAD_BYTES = 3;
-const unsigned int PACKET_OVERHEAD_BYTES = 4;
+const unsigned int PACKET_OVERHEAD_BYTES = 3;
 const unsigned int PACKET_MIN_BYTES = PACKET_OVERHEAD_BYTES + 1;
 const unsigned int PACKET_MAX_BYTES = 255;
 
@@ -56,11 +65,16 @@ void setup()
 {
     // initialize the IO pins
     pinMode(LED_PIN, OUTPUT);
+    pinMode(RED_PIN, OUTPUT);
+    pinMode(GREEN_PIN, OUTPUT);
+    pinMode(BLUE_PIN, OUTPUT);
 
-    // initialize the serial port
-    Serial.begin(BAUD_RATE);
-
-    // flash the LED state
+    // turn off the RGB LED by pulling the pins hig
+    digitalWrite(RED_PIN, RGB_OFF);
+    digitalWrite(GREEN_PIN, RGB_OFF);
+    digitalWrite(BLUE_PIN, RGB_OFF);
+    
+    // flash the onboard LED state
     for(int i = 0; i < 25; i++)
     {
         digitalWrite(LED_PIN, LED_ON);
@@ -68,6 +82,9 @@ void setup()
         digitalWrite(LED_PIN, LED_OFF);
         delay(50);
     }
+
+    // start serial communication at 9600 bps
+    Serial.begin(9600);
 }
 
 /***********************************************************************************************************************
@@ -92,31 +109,17 @@ boolean sendPacket(unsigned int payloadSize, byte *payload)
     // populate the overhead fields
     packet[0] = PACKET_START_BYTE;
     packet[1] = packetSize;
-    byte checkSumL = packet[0];
-    byte checkSumR = packet[1];
+    byte checkSum = packet[0] ^ packet[1];
 
     // populate the packet payload while computing the checksum
     for(int i = 0; i < payloadSize; i++)
     {
         packet[i + 2] = payload[i];
-        if(i % 2 == 1)
-          checkSumL = checkSumL ^ packet[i + 2];
-        else
-          checkSumR = checkSumR ^ packet[i + 2];
+        checkSum = checkSum ^ packet[i + 2];
     }
 
-//    byte checkSumR = packet[0] ^ packet[1];
-//
-//    // populate the packet payload while computing the checksum
-//    for(int i = 1; i < payloadSize; i+=2)
-//    {
-//        packet[i + 2] = payload[i];
-//        checkSumR = checkSumR ^ packet[i + 2];
-//    }
-
     // store the checksum
-    packet[packetSize - 2] = checkSumL;
-    packet[packetSize - 1] = checkSumR;
+    packet[packetSize - 1] = checkSum;
 
     // send the packet
     Serial.write(packet, packetSize);
@@ -152,22 +155,15 @@ boolean validatePacket(unsigned int packetSize, byte *packet)
         return false;
     }
 
-    // compute the checksum for left
-    byte checksumleft = 0x00;
-    for(int i = 0; i < packetSize - 2; i+=2)
+    // compute the checksum
+    byte checksum = 0x00;
+    for(int i = 0; i < packetSize - 1; i++)
     {
-        checksumleft = checksumleft ^ packet[i];
-    }
-
-    // compute the checksum for right
-    byte checksumright = 0x00;
-    for(int i = 1; i < packetSize - 2; i+=2)
-    {
-        checksumright = checksumright ^ packet[i];
+        checksum = checksum ^ packet[i];
     }
 
     // check to see if the computed checksum and packet checksum are equal
-    if(packet[packetSize - 2] != checksumleft || packet[packetSize - 1] != checksumright)
+    if(packet[packetSize - 1] != checksum)
     {
         return false;
     }
