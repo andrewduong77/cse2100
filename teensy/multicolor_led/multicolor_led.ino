@@ -75,6 +75,7 @@ void setup()
 * @BRIEF main program loop
 * @AUTHOR Christoper D. McMurrough
 **********************************************************************************************************************/
+// don't mess around with
 boolean sendPacket(unsigned int payloadSize, byte *payload)
 {
     // check for max payload size
@@ -110,7 +111,7 @@ boolean sendPacket(unsigned int payloadSize, byte *payload)
 
 
 
-
+// don't mess around with
 boolean validatePacket(unsigned int packetSize, byte *packet)
 {
     // check the packet size
