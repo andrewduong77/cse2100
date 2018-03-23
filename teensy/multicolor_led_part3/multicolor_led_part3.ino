@@ -38,6 +38,9 @@ const int LED_PIN = 13;
 const int LED_ON = HIGH;
 const int LED_OFF = LOW;
 
+// define serial communication parameters
+const unsigned long BAUD_RATE = 9600;
+
 // define RGB LED pins
 const int RED_PIN = 21;
 const int GREEN_PIN = 22;
@@ -47,9 +50,6 @@ const int RGB_OFF = HIGH;
 
 // define potentiometer pins
 const int POT_PIN = 14;
-
-// define serial communication parameters
-const unsigned long BAUD_RATE = 9600;
 
 // define packet parameters
 const byte PACKET_START_BYTE = 0xAA;
@@ -69,12 +69,10 @@ void setup()
     pinMode(GREEN_PIN, OUTPUT);
     pinMode(BLUE_PIN, OUTPUT);
 
-    // turn off the RGB LED by pulling the pins hig
-    digitalWrite(RED_PIN, RGB_OFF);
-    digitalWrite(GREEN_PIN, RGB_OFF);
-    digitalWrite(BLUE_PIN, RGB_OFF);
-    
-    // flash the onboard LED state
+    // initialize the serial port
+    Serial.begin(BAUD_RATE);
+
+    // flash the LED state
     for(int i = 0; i < 25; i++)
     {
         digitalWrite(LED_PIN, LED_ON);
@@ -82,9 +80,6 @@ void setup()
         digitalWrite(LED_PIN, LED_OFF);
         delay(50);
     }
-
-    // start serial communication at 9600 bps
-    Serial.begin(9600);
 }
 
 /***********************************************************************************************************************
@@ -232,19 +227,36 @@ void loop()
                 buffer[count] = b;
                 count++;
             }
-
+            
+                  
+                    
             // check to see if we have acquired enough bytes for a full packet
             if(count >= packetSize)
             {
                 // validate the packet
                 if(validatePacket(packetSize, buffer))
                 {
-                    // change the LED state if the packet is valid
-                    ledState = !ledState;
-                    digitalWrite(LED_PIN, ledState);
-                    
-                    // echo back the received packet payload
-                    sendPacket(packetSize - PACKET_OVERHEAD_BYTES, buffer + 2);
+                  
+                  {
+                    if( buffer[2] == 0x4C )
+                      {analogWrite(RED_PIN, 255 - buffer[3]);
+                      analogWrite(BLUE_PIN, 255 - buffer[4]);
+                      analogWrite(GREEN_PIN, 255 - buffer[5]);}
+                      
+                    else if( buffer[2] == 0x50)
+                      {int pot = analogRead(POT_PIN)/4;
+                      byte pack[2];
+                      pack[0]= 'P';
+                      pack[1] = pot;
+                      sendPacket(2, pack);}
+                      
+                      // change the LED state if the packet is valid
+                      ledState = !ledState;
+                      digitalWrite(LED_PIN, ledState);
+                      
+                      // echo back the received packet payload
+                      sendPacket(packetSize - PACKET_OVERHEAD_BYTES, buffer + 2);
+                  }
                 }
 
                 // reset the count

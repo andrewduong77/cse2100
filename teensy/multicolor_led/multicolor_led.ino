@@ -153,8 +153,92 @@ boolean validatePacket(unsigned int packetSize, byte *packet)
 
 
 
+void loop()
+{
+    // define control variables
+    boolean isRunning = true;
+    boolean ledState = false;
 
+    // create the serial packet receive buffer
+    static byte buffer[PACKET_MAX_BYTES];
+    int count = 0;
+    int packetSize = PACKET_MIN_BYTES;
 
+    // continuously check for received packets
+    while(isRunning)
+    {
+        // check to see if serial byte is available
+        if(Serial.available())
+        {
+            // get the byte
+            byte b = Serial.read();
+
+            // handle the byte according to the current count
+            if(count == 0 && b == PACKET_START_BYTE)
+            {
+                // this byte signals the beginning of a new packet
+                buffer[count] = b;
+                count++;
+                continue;
+            }
+            else if(count == 0)
+            {
+                // the first byte is not valid, ignore it and continue
+                continue;
+            }
+            else if(count == 1)
+            {
+                // this byte contains the overall packet length
+                buffer[count] = b;
+
+                // reset the count if the packet length is not in range
+                if(packetSize < PACKET_MIN_BYTES || packetSize > PACKET_MAX_BYTES)
+                {
+                    count = 0;
+                }
+                else
+                {
+                    packetSize = b;
+                    count++;
+                }
+                continue;
+            }
+            else if(count < packetSize)
+            {
+                // store the byte
+                buffer[count] = b;
+                count++;
+            }
+
+            // check to see if we have acquired enough bytes for a full packet
+            if(count >= packetSize)
+            {
+                // validate the packet
+                if(validatePacket(packetSize, buffer))
+                {
+                  if(
+                    analogWrite(RED_PIN, 255 - i);
+                    analogWrite(BLUE_PIN, 255 - i);
+                    analogWrite(GREEN_PIN, 255 - i);
+                    
+                    else if( buffer[2] == 0x50)
+                     int pot = analogRead[
+                      
+                    // change the LED state if the packet is valid
+                    ledState = !ledState;
+                    digitalWrite(LED_PIN, ledState);
+                    
+                    // echo back the received packet payload
+                    sendPacket(packetSize - PACKET_OVERHEAD_BYTES, buffer + 2);
+                }
+
+                // reset the count
+                count = 0;
+            }
+        }
+    }
+}
+/*
 void loop()
 {
     int potValue = analogRead(POT_PIN);
@@ -206,3 +290,4 @@ void loop()
         }
     }
 }
+*/
