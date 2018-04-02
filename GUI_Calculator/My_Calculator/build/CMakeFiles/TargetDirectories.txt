@@ -1,0 +1,3 @@
+/home/pi/cse2100/GUI_Calculator/My_Calculator/build/CMakeFiles/edit_cache.dir
+/home/pi/cse2100/GUI_Calculator/My_Calculator/build/CMakeFiles/rebuild_cache.dir
+/home/pi/cse2100/GUI_Calculator/My_Calculator/build/CMakeFiles/Calculator.dir
