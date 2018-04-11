@@ -190,11 +190,24 @@ void loop()
     unsigned int count = 0;
     unsigned int packetSize = PACKET_MIN_BYTES;
 
-  
+    int value_prev = -1;
+    
+    int pay[0] = 'P';
+    int pay[1] = 2;
+    pay[1] >> 8;
+    int pay[2] = 127;
+
+    
     // continuously check for received packets
     while(isRunning)
     {
-      
+       
+      value_now = analogRead(14);
+        if(value_now != value_prev)
+          {  
+            value_prev = value_now;
+            
+          }
         // check to see if serial byte is available
         if(Serial.available())
         {
