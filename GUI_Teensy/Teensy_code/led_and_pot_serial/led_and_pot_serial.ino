@@ -190,24 +190,25 @@ void loop()
     unsigned int count = 0;
     unsigned int packetSize = PACKET_MIN_BYTES;
 
-    int value_prev = -1;
-    
-    int pay[0] = 'P';
-    int pay[1] = 2;
-    pay[1] >> 8;
-    int pay[2] = 127;
-
+    int value_prev = 0;
     
     // continuously check for received packets
     while(isRunning)
     {
+     int pot_val = analogRead(POT_PIN);
+
+       byte payload[3];
+
+       payload[0] = 'P';
+       payload[1] = pot_val >> 8;
+       payload[2] = pot_val & 0x00FF;
        
-      value_now = analogRead(14);
-        if(value_now != value_prev)
+       if((pot_val <= value_prev + 15) || (pot_val >= value_prev - 15))
           {  
-            value_prev = value_now;
-            
+            value_prev = pot_val;
+            sendPacket(3, payload);
           }
+          
         // check to see if serial byte is available
         if(Serial.available())
         {
