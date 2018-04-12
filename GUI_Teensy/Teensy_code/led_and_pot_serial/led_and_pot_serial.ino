@@ -203,7 +203,7 @@ void loop()
        payload[1] = pot_val >> 8;
        payload[2] = pot_val & 0x00FF;
        
-       if((pot_val <= value_prev + 15) || (pot_val >= value_prev - 15))
+       if((pot_val <= value_prev - 15) || (pot_val >= value_prev + 15))
           {  
             value_prev = pot_val;
             sendPacket(3, payload);
