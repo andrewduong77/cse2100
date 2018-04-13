@@ -16,7 +16,32 @@ void ObtainGuiWidgets(GtkBuilder *p_builder)
   #define GuiappGET(xx) gui_app->xx=GTK_WIDGET(gtk_builder_get_object(p_builder,#xx))
   GuiappGET(window1);
   GuiappGET(entry_sd);
+  GuiappGET(serial_device);
+  GuiappGET(open_device_button);
+  GuiappGET(close_device_button);
+
+  GuiappGET(red_label);
+  GuiappGET(blue_label);
+  GuiappGET(green_label);
+
+  GuiappGET(entry_red);
+  GuiappGET(entry_blue);
+  GuiappGET(entry_green);
+
+  GuiappGET(send_button);
+  GuiappGET(slider_label);
+
+  GuiappGET(red_sl);
+  GuiappGET(blue_sl);
+  GuiappGET(green_sl);
+
+  GuiappGET(label_tx);
+  GuiappGET(tx);
+
   GuiappGET(label_voltage);
+  GuiappGET(voltage);
+
+  GuiappGET(exit_button);
     
 }
 

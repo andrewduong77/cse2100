@@ -15,13 +15,41 @@ using namespace std;
  **************************************************************/
 
 typedef struct 
+
 {
   GtkWidget *window1; //visualization window
 
   GtkWidget *entry_sd; //the text field to contain the name of the serial device
-  GtkWidget *label_voltage; // the label on which we display the voltage
-  
-} Gui_Window_AppWidgets;
+  GtkWidget *serial_device; // the label on which we display the voltage
+  GtkWidget *open_device_button;
+  GtkWidget *close_device_button;
+
+  GtkWidget *red_label;
+  GtkWidget *blue_label;
+  GtkWidget *green_label;
+
+  GtkWidget *entry_red;
+  GtkWidget *entry_blue;
+  GtkWidget *entry_green;
+
+  GtkWidget *send_button;
+  GtkWidget *slider_label;
+
+  GtkWidget *red_sl;
+  GtkWidget *blue_sl;
+  GtkWidget *green_sl;
+
+  GtkWidget *label_tx;
+  GtkWidget *tx;
+
+  GtkWidget *label_voltage;
+  GtkWidget *voltage;
+
+  GtkWidget *exit_button;
+
+}
+
+ Gui_Window_AppWidgets;
 
 extern Gui_Window_AppWidgets *gui_app;
 

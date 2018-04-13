@@ -31,7 +31,7 @@
             <property name="can_focus">False</property>
             <property name="margin_top">1</property>
             <child>
-              <object class="GtkLabel" id="serial_device_label">
+              <object class="GtkLabel" id="serial_device">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Serial Device:</property>
@@ -42,7 +42,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="entry1">
+              <object class="GtkEntry" id="entry_sd">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
               </object>
@@ -59,6 +59,7 @@
                 <property name="receives_default">True</property>
                 <property name="relief">none</property>
                 <property name="yalign">0.36000001430511475</property>
+                <signal name="clicked" handler="button_opendevice_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -71,6 +72,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="button_closedevice_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -94,10 +96,10 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkLabel" id="label2">
+                  <object class="GtkLabel" id="red_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Red:       			</property>
+                    <property name="label" translatable="yes">Red:       		</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -105,7 +107,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="entry2">
+                  <object class="GtkEntry" id="entry_red">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                   </object>
@@ -126,7 +128,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkLabel" id="label3">
+                  <object class="GtkLabel" id="blue_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Blue:			</property>
@@ -137,7 +139,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="entry3">
+                  <object class="GtkEntry" id="entry_blue">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                   </object>
@@ -158,7 +160,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkLabel" id="label4">
+                  <object class="GtkLabel" id="green_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Green:			</property>
@@ -169,7 +171,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="entry4">
+                  <object class="GtkEntry" id="entry_green">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                   </object>
@@ -186,11 +188,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button1">
+              <object class="GtkButton" id="send_button">
                 <property name="label" translatable="yes">Send</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="button_send_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -199,7 +202,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="label1">
+              <object class="GtkLabel" id="slider_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Sliders:  1.RED 2.BLUE 3.GREEN</property>
@@ -217,6 +220,7 @@
                 <property name="adjustment">adjust_red</property>
                 <property name="fill_level">254.97999999999999</property>
                 <property name="round_digits">2</property>
+                <signal name="value-changed" handler="scale_rgb_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -230,6 +234,7 @@
                 <property name="can_focus">True</property>
                 <property name="adjustment">adjust_blue</property>
                 <property name="round_digits">5</property>
+                <signal name="value-changed" handler="scale_rgb_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -243,6 +248,7 @@
                 <property name="can_focus">True</property>
                 <property name="adjustment">adjust_green</property>
                 <property name="round_digits">1</property>
+                <signal name="value-changed" handler="scale_rgb_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -267,13 +273,24 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkLabel" id="label5">
+                  <object class="GtkLabel" id="label_tx">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Tx String:	</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="tx">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">label</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
                     <property name="top_attach">0</property>
                   </packing>
                 </child>
@@ -289,13 +306,24 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkLabel" id="label6">
+                  <object class="GtkLabel" id="label_voltage">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Voltage:		</property>
+                    <property name="label" translatable="yes">Voltage:	</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="voltage">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">label</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
                     <property name="top_attach">0</property>
                   </packing>
                 </child>
@@ -320,6 +348,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="relief">none</property>
+            <signal name="clicked" handler="button_exit_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
