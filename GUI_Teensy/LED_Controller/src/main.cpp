@@ -101,35 +101,71 @@ extern "C" void button_closedevice_clicked(GtkWidget *p_wdgt, gpointer p_data )
 
 extern "C" void button_send_clicked(GtkWidget *p_wdgt, gpointer p_data ) 
 {
-  //const char *t_red_value;
-  //unsigned char uc_red_value;
+  const char *t_red_value;
+  unsigned char uc_red_value;
+  const char *t_blue_value;
+  unsigned char uc_blue_value;
+  const char *t_green_value;
+  unsigned char uc_green_value;
   char c_cc_value[40];
   char send_buff[7];
   int length_send_buff = 7;
 
 
   //getting text from widget:
-  //t_red_value = gtk_entry_get_text(GTK_ENTRY(gui_app->entry_red));
+  	t_red_value = gtk_entry_get_text(GTK_ENTRY(gui_app->entry_red));
+	t_blue_value = gtk_entry_get_text(GTK_ENTRY(gui_app->entry_blue));
+	t_green_value = gtk_entry_get_text(GTK_ENTRY(gui_app->entry_green));
+
 
   //setting range on scale slider to uc_red_value 
-  //gtk_range_set_value(GTK_RANGE(gui_app->scale_red),uc_red_value);
+	uc_red_value = atoi(t_red_value);
+	uc_blue_value = atoi(t_blue_value);
+	uc_green_value = atoi(t_green_value);
+    gtk_range_set_value(GTK_RANGE(gui_app->scale_red),uc_red_value);
+	gtk_range_set_value(GTK_RANGE(gui_app->scale_blue),uc_blue_value);
+	gtk_range_set_value(GTK_RANGE(gui_app->scale_green),uc_green_value);
 		      
   //setting text on label
-  //gtk_label_set_text(GTK_LABEL(gui_app->label_tx),c_cc_value);
+
+	Send_buff[0] = 0xAA;
+	Send_buff[1] = 7;
+	Send_buff[2] = L;
+	Send_buff[3] = uc_red_value;
+	Send_buff[4] = uc_green_value;
+	Send_buff[5] = uc_blue_value;
+	Send_buff[6] = Send_buff[0]^Send_buff[1]^Send_buff[2]^Send_buff[3]^Send_buff[4]^Send_buff[5];
+
+	sprint(c_cc_value,"%X %X %X %X %X %X %X", Send_buff[0],Send_buff[1],Send_buff[2],Send_buff[3],Send_buff[4],Send_buff[5],Send_buff[6];
+
+    gtk_label_set_text(GTK_LABEL(gui_app->label_tx),c_cc_value);
 
   //this is how you send an array out on the serial port:
-  //write(ser_dev,send_buff,length_send_buff);
+
+	write(ser_dev,send_buff,length_send_buff);
 }
 
 extern "C" void scale_rgb_value_changed(GtkWidget *p_wdgt, gpointer p_data ) 
 {
   //getting the value of the scale slider 
-  //double g_red_value = gtk_range_get_value(GTK_RANGE(gui_app->scale_red));
+  	double g_red_value = gtk_range_get_value(GTK_RANGE(gui_app->scale_red));
+	double g_blue_value = gtk_range_get_value(GTK_RANGE(gui_app->scale_blue));
+	double g_green_value = gtk_range_get_value(GTK_RANGE(gui_app->scale_green));
+
+	entry_red = scale_red;
+	entry_blue = scale_blue;
+	entry_green = scale_green;
 
 
   //setting text on entry
-  //  sprintf(c_cc_value,"%d",uc_red_value);
-  //gtk_entry_set_text(GTK_ENTRY(gui_app->entry_red),c_cc_value);
+  	sprintf(c_cc_value,"%d",uc_red_value);
+  	gtk_entry_set_text(GTK_ENTRY(gui_app->entry_red),c_cc_value);
+  	
+    sprintf(c_cc_value,"%d",uc_blue_value);
+  	gtk_entry_set_text(GTK_ENTRY(gui_app->entry_blue),c_cc_value);
+    
+    sprintf(c_cc_value,"%d",uc_green_value);
+  	gtk_entry_set_text(GTK_ENTRY(gui_app->entry_green),c_cc_value);
   
 }
 
