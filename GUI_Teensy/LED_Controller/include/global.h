@@ -35,9 +35,9 @@ typedef struct
   GtkWidget *send_button;
   GtkWidget *slider_label;
 
-  GtkWidget *red_sl;
-  GtkWidget *blue_sl;
-  GtkWidget *green_sl;
+  GtkWidget *scale_red;
+  GtkWidget *scale_blue;
+  GtkWidget *scale_green;
 
   GtkWidget *label_tx;
   GtkWidget *tx;

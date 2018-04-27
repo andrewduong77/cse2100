@@ -220,6 +220,7 @@
                 <property name="adjustment">adjust_red</property>
                 <property name="fill_level">254.97999999999999</property>
                 <property name="round_digits">2</property>
+                <signal name="value-changed" handler="scale_rgb_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -233,6 +234,7 @@
                 <property name="can_focus">True</property>
                 <property name="adjustment">adjust_blue</property>
                 <property name="round_digits">5</property>
+                <signal name="value-changed" handler="scale_rgb_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -246,6 +248,7 @@
                 <property name="can_focus">True</property>
                 <property name="adjustment">adjust_green</property>
                 <property name="round_digits">1</property>
+                <signal name="value-changed" handler="scale_rgb_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
