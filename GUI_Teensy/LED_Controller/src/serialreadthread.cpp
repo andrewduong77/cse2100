@@ -16,7 +16,42 @@
 #define PACKET_MIN_BYTES  PACKET_OVERHEAD_BYTES + 1
 #define PACKET_MAX_BYTES  255
 
+bool validatePacket(unsigned int packetSize, unsigned char *packet)
+{
+    // check the packet size
+    if(packetSize < PACKET_MIN_BYTES || packetSize > PACKET_MAX_BYTES)
+    {
+        return false;
+    }
 
+    // check the start byte
+    if(packet[0] != PACKET_START_BYTE)
+    {
+        return false;
+    }
+
+    // check the length byte
+    if(packet[1] != packetSize)
+    {
+        return false;
+    }
+
+    // compute the checksum
+    unsigned char checksum = 0x00;
+    for(unsigned int i = 0; i < packetSize - 1; i++)
+    {
+        checksum = checksum ^ packet[i];
+    }
+
+    // check to see if the computed checksum and packet checksum are equal
+    if(packet[packetSize - 1] != checksum)
+    {
+        return false;
+    }
+
+    // all validation checks passed, the packet is valid
+    return true;
+}
 gpointer Serial_Read_Thread()
 {
   ssize_t r_res;
@@ -47,7 +82,68 @@ gpointer Serial_Read_Thread()
 
 	      //TODO: receive an entire packet and validate it.
 
-	      
+	      if(count == 0 && ob[0] == PACKET_START_BYTE)
+            {
+                // this byte signals the beginning of a new packet
+                buffer[count] = ob[0];
+                count++;
+                continue;
+            }
+            else if(count == 0)
+            {
+                // the first byte is not valid, ignore it and continue
+                continue;
+            }
+            else if(count == 1)
+            {
+                // this byte contains the overall packet length
+                buffer[count] = ob[0];
+
+                // reset the count if the packet length is not in range
+                if(packetSize < PACKET_MIN_BYTES || packetSize > PACKET_MAX_BYTES)
+                {
+                    count = 0;
+                }
+                else
+                {
+                    packetSize = ob[0];
+                    count++;
+                }
+                continue;
+            }
+            else if(count < packetSize)
+            {
+                // store the byte
+                buffer[count] = ob[0];
+                count++;
+            }
+
+            // check to see if we have acquired enough bytes for a full packet
+            if(count >= packetSize)
+            {
+                // validate the packet
+                if(validatePacket(packetSize, buffer))
+                {
+
+                    if(buffer[2]=='P')
+                    {
+int buffer_val = (buffer[3]<<8)+buffer[4];
+	 		voltage_disp= (buffer_val * MAX_VOLTAGE)/MAX_ADC_VALUE;
+	      		g_mutex_lock(mutex_to_protect_voltage_display);
+	      		sprintf(c_voltage_value,"%1.3f",voltage_disp);
+	      		g_mutex_unlock(mutex_to_protect_voltage_display);
+                    }
+
+
+                    
+                    // echo back the received packet payload
+                    //sendPacket(packetSize - PACKET_OVERHEAD_BYTES, buffer + 2);
+                    
+                }
+
+                // reset the count
+                count = 0;
+            }
 	      //TODO: Once validated, check if the third byte is a 'P'
 	      //decode the payload into a single int between 0 and MAX_ADC_VALUE
 	      //convert it into a voltage 0->0V  MAX_ADC_VALUE->MAX_VOLTAGE
